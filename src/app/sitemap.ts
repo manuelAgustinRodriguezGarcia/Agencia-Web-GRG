@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { LEGAL_PATHS, SITE_URL } from "@/config/site";
+import { isDemoPathname } from "@/demos/policy";
 import { getAllProjectSlugs } from "@/lib/projects/projectBySlug";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -42,5 +43,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  return [...staticRoutes, ...projectRoutes];
+  const routes = [...staticRoutes, ...projectRoutes];
+
+  for (const route of routes) {
+    const pathname = new URL(route.url).pathname;
+    if (isDemoPathname(pathname)) {
+      throw new Error(
+        `Las demos no pueden entrar al sitemap: ${route.url}`,
+      );
+    }
+  }
+
+  return routes;
 }

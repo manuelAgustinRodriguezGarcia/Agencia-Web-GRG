@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+import { DEMO_ROBOTS_TAG } from "./src/demos/policy";
+
 const isDev = process.env.NODE_ENV === "development";
 
 const securityHeaders = [
@@ -12,6 +14,10 @@ const securityHeaders = [
     value:
       "camera=(), microphone=(), geolocation=(), interest-cohort=(), unload=()",
   },
+];
+
+const demoRobotsHeaders = [
+  { key: "X-Robots-Tag", value: DEMO_ROBOTS_TAG },
 ];
 
 const nextConfig: NextConfig = {
@@ -49,6 +55,14 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: securityHeaders,
+      },
+      {
+        source: "/demo",
+        headers: demoRobotsHeaders,
+      },
+      {
+        source: "/demo/:path*",
+        headers: demoRobotsHeaders,
       },
     ];
   },
